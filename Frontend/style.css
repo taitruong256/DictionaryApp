@@ -1,0 +1,13 @@
+div.container {
+    padding: top right bottom left;
+    padding: top/bottom left/right;
+    padding: 50px 20px;
+}
+#list-group {
+    height: 500px;
+    overflow-y: auto;
+}
+
+#content-area {
+    padding: 20px;
+}
