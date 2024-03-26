@@ -1,3 +1,6 @@
+body {
+    background-color: #b5c2d7;
+}
 div.container {
     padding: top right bottom left;
     padding: top/bottom left/right;
@@ -10,4 +13,12 @@ div.container {
 
 #content-area {
     padding: 20px;
+}
+.btn-outline-secondary {
+    background-color: #0d6efd; /* Adjust color as needed */
+    border-color: #0d6efd;
+    color: white;
+  }
+.btn-small {
+  padding: 10px 20px; /* Giảm padding ngang và dọc */
 }

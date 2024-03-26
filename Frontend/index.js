@@ -47,7 +47,11 @@ $(document).ready(function() {
             var chuDeHtml = `<h2>${chuDe.chu_de}</h2>`;
             var listTuHtml = "";
             $.each(chuDe.list_tu, function(index, tu) {
-              listTuHtml += `<div class="item"><strong>${tu.tu}</strong> (${tu.loai_tu}) : ${tu.nghia}</div>`;
+              listTuHtml += `<div class="item" style="padding-top: 20px;">
+              <strong>${tu.tu}</strong> (${tu.loai_tu}) : ${tu.nghia} 
+              <button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#editModal" style="padding:3px;"><i class="fa-regular fa-pen-to-square"></i> Sửa</button>
+              <button class="btn btn-outline-secondary" type="button" style="padding:3px"><i class="fa-solid fa-x" ></i> Xóa</button>
+              </div>`;
             });
             $("#content-area").html(chuDeHtml + listTuHtml);
         }
@@ -61,7 +65,11 @@ $(document).ready(function() {
     var chuDeHtml = `<h2>${chuDe.chu_de}</h2>`;
     var listTuHtml = "";
     $.each(chuDe.list_tu, function(index, tu) {
-      listTuHtml += `<div class="item"><strong>${tu.tu}</strong> (${tu.loai_tu}) : ${tu.nghia}</div>`;
+      listTuHtml += `<div class="item">
+      <strong>${tu.tu}</strong> (${tu.loai_tu}) : ${tu.nghia}
+      <button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#editModal" style="padding:3px;"><i class="fa-regular fa-pen-to-square"></i> Sửa</button>
+      <button class="btn btn-outline-secondary" type="button" style="padding:3px"><i class="fa-solid fa-x" ></i> Xóa</button>
+      </div>`;
     });
     $("#content-area").append(chuDeHtml + listTuHtml);
     $("#list-group").append( `<a href="#" class="list-group-item list-group-item-action active">${chuDe.chu_de}</a>`);
