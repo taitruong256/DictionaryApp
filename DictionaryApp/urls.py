@@ -22,7 +22,4 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/',include('api.urls')),
     path("", home.get_home, name='get_home'),
-    path('api/add-word/', home.AddWordAPIView.as_view(), name='add_word'),
-    path('api/update-word/<int:pk>/', home.UpdateWordAPIView.as_view(), name='update_word'),
-    path('api/delete-word/<int:pk>/', home.DeleteWordlAPIView.as_view(), name='delete_word'),
 ]
