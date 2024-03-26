@@ -63,7 +63,6 @@ $(document).ready(function () {
             <div class="item">
             <strong>${tu.tu}</strong>
             (${tu.loai_tu}) hello: ${tu.nghia}
-            <a class="btn btn-outline-secondary btn-delete" href="/delete-word/${tu.id}/" data-method="delete">Delete</a>
             </div>`;
         });
         $("#content-area").html(chuDeHtml + listTuHtml);
@@ -81,9 +80,9 @@ function assignItems() {
         <div class="item">
         <strong>${tu.tu}</strong>
         (${tu.loai_tu}) hello: ${tu.nghia}
-        <a class="btn btn-outline-secondary btn-delete" href="/delete-word/${tu.id}/" data-method="delete">Xóa</a>
+        <a class="btn btn-outline-secondary btn-delete" href="/api/delete-word/${tu.id}/" data-method="delete">Xóa</a>    
         </div>`;
-    });
+    });                                      // thêm thẻ a để link tới url gọi api/delete-word/id để xóa, thẻ a dùng method = GET nên bị lỗi
     $("#content-area").append(chuDeHtml + listTuHtml);
     $("#list-group").append(
       `<a href="#" class="list-group-item list-group-item-action active">${chuDe.chu_de}</a>`
