@@ -1,35 +1,3 @@
-// var data = [
-//   {
-//     chu_de: "Aminal",
-//     list_tu: [
-//       {
-//         tu: "dog",
-//         loai_tu: "danh tu",
-//         nghia: "chó",
-//       },
-//       {
-//         tu: "cat",
-//         loai_tu: "danh tu",
-//         nghia: "mèo",
-//       },
-//     ],
-//   },
-//   {
-//     chu_de: "Anime",
-//     list_tu: [
-//       {
-//         tu: "naruto",
-//         loai_tu: "danh tu",
-//         nghia: "ninja",
-//       },
-//       {
-//         tu: "connan",
-//         loai_tu: "danh tu",
-//         nghia: "thám tử lừng danh",
-//       },
-//     ],
-//   },
-// ];
 var data = [];
 async function loadItems() {
   try {
@@ -110,25 +78,35 @@ function assignItems() {
   });
 }
 
-function search() {
-  // lấy từ muốn search ra
-  var wordToSearch = $("#wordToSearch")[0].value;
+async function search() {
+  var wordToSearch = document.getElementById("wordToSearch").value;
+  console.log("Searching for:", wordToSearch);
+  try {
+    var response = await fetch(
+      `http://127.0.0.1:8000/api/words/?search=${encodeURIComponent(
+        wordToSearch
+      )}`
+    );
+    if (!response.ok) throw new Error("Không Tìm Thấy");
+    var res = await response.json(); // Sử dụng await ở đây
+    console.log(res); // data giờ là một đối tượng JSON
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
 
-  // gọi API chỗ này
-  // res = {}
-  // trả về cái dict res như ở dưới
-
-  res = {
-    id: "1113",
-    chu_de: "Aminal",
-    tu: "dog",
-    loai_tu: "danh tu",
-    nghia: "chó",
-  };
+  // res = {
+  //   id: "1113",
+  //   chu_de: "Aminal",
+  //   tu: "dog",
+  //   loai_tu: "danh tu",
+  //   nghia: "chó",
+  // };
 
   // format cái kết quả cho nó đẹp
-  textResult = `${res.chu_de} | ${res.tu} (${res.loai_tu}): ${res.nghia}`;
-
-  // gắn lên front end
-  $("input#searchResult").val(textResult);
+  res.forEach((word_search) => {
+    let textResult = `${word_search.topic} | ${word_search.word} (${word_search.type}): ${word_search.definition}`;
+    console.log(textResult);
+    $("input#searchResult").val(textResult);
+    // Nếu bạn muốn hiển thị kết quả trong một
+  });
 }
