@@ -132,54 +132,60 @@
         ></button>
       </div>
       <div class="modal-body">
-        <div class="input-group mb-3">
-          <label class="input-group-text" for="inputGroupSelect01"
-            >Chủ đề</label
-          >
-          <input type="text" class="form-control" placeholder="Nhập chủ đề" />
-          <select class="form-select" id="inputGroupSelect01">
-            <option selected>Choose...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Loại từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập loại từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập nghĩa của từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
+        <form id="editWordForm" method="POST" action="/api/update-word/">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01"
+              >Chủ đề</label
+            >
+            <input type="text" class="form-control" placeholder="Nhập chủ đề" name="topic"/>
+            <select class="form-select" id="inputGroupSelect01">
+              <option selected>Choose...</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+          </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Từ</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nhập từ"
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+              name="word"
+            />
+          </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Loại từ</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nhập loại từ"
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+              name="type"
+            />
+          </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nhập nghĩa của từ"
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+              name="definition"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Lưu</button>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Đóng
         </button>
-        <button type="button" class="btn btn-primary">Lưu</button>
       </div>
     </div>
   </div>

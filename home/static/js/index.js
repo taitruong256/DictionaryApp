@@ -1,4 +1,43 @@
 var data = [];
+
+
+// Hàm này chuẩn hóa nội dung json về dạng 
+// var data = [
+//   {
+//     "chu_de": "Aminal",
+//     "list_tu": [
+//       {
+//         "tu":"dog",
+//         "loai_tu": "danh tu",
+//         "nghia": "chó",
+//         "id": 1
+//       },
+//       {
+//         "tu":"cat",
+//         "loai_tu": "danh tu",
+//         "nghia": "mèo"
+//         "id": 2
+//       }
+//     ]
+//   },
+//   {
+//       "chu_de": "Anime",
+//       "list_tu": [
+//         {
+//           "tu":"naruto",
+//           "loai_tu": "danh tu",
+//           "nghia": "ninja"
+//           "id": 3
+//         },
+//         {
+//           "tu":"connan",
+//           "loai_tu": "danh tu",
+//           "nghia": "thám tử lừng danh"
+//           "id": 4 
+//         }
+//       ]
+//     }
+// ];
 async function loadItems() {
   try {
     const response = await fetch(wordListUrl);
@@ -42,35 +81,8 @@ window.onload = async function () {
   assignItems();
 };
 
-// await console.log(data);
-$(document).ready(function () {
-  $(".list-group-item").click(function () {
-    // Xóa lớp "active" khỏi tất cả các mục
-    $(".list-group-item").removeClass("active");
 
-    // Thêm lớp "active" vào mục được nhấp chuột
-    $(this).addClass("active");
-
-    // Cập nhật vùng nội dung dựa trên văn bản của mục được nhấp (tùy chọn)
-    var tieude = $(this).text();
-    $.each(data, function (index, chuDe) {
-      console.log(tieude, chuDe.chu_de);
-      if (tieude == chuDe.chu_de) {
-        var chuDeHtml = `<h2>${chuDe.chu_de}</h2>`;
-        var listTuHtml = "";
-        $.each(chuDe.list_tu, function (index, tu) {
-          listTuHtml += `
-            <div class="item">
-            <strong>${tu.tu}</strong>
-            (${tu.loai_tu}) hello: ${tu.nghia}
-            </div>`;
-        });
-        $("#content-area").html(chuDeHtml + listTuHtml);
-      }
-    });
-  });
-});
-
+// Hàm này để lấy data gắn vào nội dung 
 function assignItems() {
   $.each(data, function (index, chuDe) {
     var chuDeHtml = `<h2>${chuDe.chu_de}</h2>`;
@@ -78,17 +90,53 @@ function assignItems() {
     $.each(chuDe.list_tu, function (index, tu) {
       listTuHtml += `
         <div class="item">
-        <strong>${tu.tu}</strong>
-        (${tu.loai_tu}) hello: ${tu.nghia}
-        <a class="btn btn-outline-secondary btn-delete" href="/api/delete-word/${tu.id}/" data-method="delete">Xóa</a>    
+          <strong>${tu.tu}</strong>
+          (${tu.loai_tu}) : ${tu.nghia}
+          <button type="button" class="btn btn-primary" onclick="deleteWord(${tu.id})">Xóa</button>
+          <button type="button" class="btn btn-primary edit-word" data-word-id="${tu.id}" data-bs-toggle="modal" data-bs-target="#editModal">Sửa</button>
         </div>`;
-    });                                      // thêm thẻ a để link tới url gọi api/delete-word/id để xóa, thẻ a dùng method = GET nên bị lỗi
+    });                               
     $("#content-area").append(chuDeHtml + listTuHtml);
     $("#list-group").append(
       `<a href="#" class="list-group-item list-group-item-action active">${chuDe.chu_de}</a>`
     );
   });
 }
+
+
+// Hàm này để lấy mã CSRF token từ cookie, vì Django yêu cầu bảo mật phải có CSRF token
+function getCSRFToken() {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim();
+      if (cookie.substring(0, 'csrftoken'.length + 1) === 'csrftoken=') {
+        cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+
+// Hàm này xử lý sự kiện click nút Xóa, gửi API xuống server có method = DELETE 
+function deleteWord(wordId) {
+  $.ajax({
+    url: `/api/delete-word/${wordId}/`,
+    type: 'DELETE',
+    headers: { "X-CSRFToken": getCSRFToken() }, // Lấy mã CSRF token
+    success: function(response) {
+      alert("Xóa từ thành công!");
+      window.location.href = "";
+    },
+    error: function(xhr, status, error) {
+      alert("Đã xảy ra lỗi khi xóa từ.");           // quay lại trang chủ 
+    }
+  });
+}
+
 
 async function search() {
   var wordToSearch = document.getElementById("wordToSearch").value;
@@ -114,6 +162,7 @@ async function search() {
   //   nghia: "chó",
   // };
 
+
   // format cái kết quả cho nó đẹp
   res.forEach((word_search) => {
     let textResult = `${word_search.topic} | ${word_search.word} (${word_search.type}): ${word_search.definition}`;
@@ -123,3 +172,38 @@ async function search() {
   });
 }
 
+
+
+
+
+// Thêm sự kiện click cho nút Sửa
+$(document).on('click', '.edit-word', function() {
+  var wordId = $(this).data('word-id');          // Lấy id của từ từ thuộc tính data-word-id
+  $('#editWordForm').attr('action', '/api/update-word/' + wordId+'/');  // Cập nhật action của form
+});
+
+
+
+// Sự kiện nút Lưu cho form sửa và gửi API có method = PUT 
+$('#editWordForm').on('submit', function(event) {
+  event.preventDefault(); 
+  var formData = $(this).serialize();                          // Lấy dữ liệu từ form
+  var csrfToken = getCSRFToken()
+  // Gửi request đến API
+  $.ajax({
+    type: 'PUT', 
+    url: $(this).attr('action'), 
+    data: formData,                                           // Dữ liệu gửi đi từ form
+    beforeSend: function(xhr, settings) {
+      
+      xhr.setRequestHeader("X-CSRFToken", csrfToken);           // Thêm csrf_token vào header của request
+    },
+    success: function(response) {
+      alert('Đã cập nhật thành công.')
+      window.location.href = "";                // quay lại trang chủ 
+    },
+    error: function(xhr, status, error) {
+      alert("Đã xảy ra lỗi khi cập nhật. Xin hãy điền đầy đủ thông tin và thử lại.");
+    }
+  });
+});
