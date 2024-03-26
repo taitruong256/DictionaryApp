@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Word
+from home.models import Word
 
 class WordSerializer(serializers.ModelSerializer):
     class Meta:

@@ -4,45 +4,41 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from .models import Word
 from .serializers import WordSerializer
-from rest_framework import generics
+from rest_framework import generics, status 
 
 # Create your views here.
 def get_home(request):
     return render(request, 'index.html')
 
 
-@api_view(['POST'])
-def add_word(request):
-    serializer = WordSerializer(data=request.data)
-    JsonResponse(request.data, status=201);
-    if serializer.is_valid():
-        serializer.save()
-        return JsonResponse(serializer.data, status=201)
-    return JsonResponse(serializer.errors, status=400)
+class AddWordAPIView(generics.CreateAPIView):
+    queryset = Word.objects.all()
+    serializer_class = WordSerializer
 
-
-@api_view(['POST'])
-def update_word(request, id):
-    try:
-        word = Word.objects.get(pk=id)
-    except Word.DoesNotExist:
-        return Response({"message": "Từ vựng không tồn tại"}, status=404)
-
-    if request.method == 'POST':
-        serializer = WordSerializer(word, data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=400)
+            return render(request, 'index.html')
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UpdateWordAPIView(generics.UpdateAPIView):
+    queryset = Word.objects.all()
+    serializer_class = WordSerializer
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return render(request, 'index.html')
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class DeleteWordlAPIView(generics.DestroyAPIView):
+    queryset = Word.objects.all()
+    serializer_class = WordSerializer
 
-@api_view(['DELETE'])
-def delete_word(request, id):
-    try:
-        word = Word.objects.get(pk=id)
-    except Word.DoesNotExist:
-        return Response({"message": "Từ vựng không tồn tại"}, status=404)
-
-    if request.method == 'DELETE':
-        word.delete()
-        return Response({"message": "Từ vựng đã được xóa"}, status=204)
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
