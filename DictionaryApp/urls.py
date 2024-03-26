@@ -21,7 +21,7 @@ from home import views as home
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home.get_home, name='get_home'),
-    path('api/add-word/', home.add_word, name='add_word'),
-    path('api/update-word/<int:id>/', home.update_word, name='update_word'),
-    path('api/delete-word/<int:id>/', home.delete_word, name='delete_word'),
+    path('add-word/', home.add_word, name='add_word'),
+    path('update-word/<int:id>/', home.update_word, name='update_word'),
+    path('delete-word/<int:id>/', home.delete_word, name='delete_word'),
 ]

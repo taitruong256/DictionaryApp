@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import JsonResponse
 from .models import Word
 from .serializers import WordSerializer
+from rest_framework import generics
 
 # Create your views here.
 def get_home(request):
@@ -12,10 +14,11 @@ def get_home(request):
 @api_view(['POST'])
 def add_word(request):
     serializer = WordSerializer(data=request.data)
+    JsonResponse(request.data, status=201);
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=201)
-    return Response(serializer.errors, status=400)
+        return JsonResponse(serializer.data, status=201)
+    return JsonResponse(serializer.errors, status=400)
 
 
 @api_view(['POST'])
@@ -31,6 +34,7 @@ def update_word(request, id):
             serializer.save()
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
+
 
 @api_view(['DELETE'])
 def delete_word(request, id):
