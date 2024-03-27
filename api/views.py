@@ -22,11 +22,6 @@ class WordList(generics.ListCreateAPIView):
             queryset = queryset.filter(word__startswith=search_query)
         return queryset
 
-    # def delete(self, request, *args, **kwargs):
-    #     Word.objects.all().delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class AddWordAPIView(generics.CreateAPIView):
     queryset = Word.objects.all()
     serializer_class = WordSerializer

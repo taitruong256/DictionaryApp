@@ -1,9 +1,7 @@
-{% extends 'base.html'%}
-{% load static %}
-{%block content%}
+{% extends 'base.html'%} {% load static %} {%block content%}
 <div class="container">
   <div class="row">
-    <h1>Dictionary</h1>
+    <h1 style="color: #0b306f"><i class="fa-solid fa-book"></i>Dictionary</h1>
   </div>
   <div class="row" style="padding-top: 30px; padding-bottom: 50px">
     <div class="input-group input-group-lg">
@@ -32,81 +30,103 @@
     </div>
   </div>
   <div class="row">
-    <div class="input-group input-group-lg">
-      <input
-        type="text"
-        class="form-control"
-        id="searchResult"
-        value="Animal | Cat (N.): con mèo"
-        aria-label="Recipient's username with two button addons"
-        disabled
-      />
-      <button
-        class="btn btn-outline-secondary"
-        type="button"
-        data-bs-toggle="modal"
-        data-bs-target="#editModal"
-      >
-        <i class="fa-regular fa-pen-to-square"></i> Sửa
-      </button>
-      <button class="btn btn-outline-secondary" type="button">
-        <i class="fa-solid fa-x"></i> Xóa
-      </button>
+    <div class="table-container hidden" id="tableContainer">
+      <table id="searchResultsTable">
+        <thead>
+          <tr>
+            <th>Chủ đề</th>
+            <th>Từ</th>
+            <th>Loại từ</th>
+            <th>Nghĩa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Kết quả tìm kiếm sẽ được chèn vào đây -->
+        </tbody>
+      </table>
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-3" style="padding-top: 70px">
       <div class="list-group" id="list-group"></div>
     </div>
     <div class="col-sm-9">
-      <script type="text/javascript">
-        var wordListUrl = "{% url 'word-list' %}";
-      </script>
-      <div id="content-area"></div>
+      <div id="content-area" style="padding-top: 70px"></div>
     </div>
   </div>
+  <footer>
+    <h3>From IUH With Love <3</h3>
+  </footer>
 </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form method="POST" action="/api/add-word/">
-              {% csrf_token %}
-              <div class="input-group mb-3">
-                  <label class="input-group-text" for="inputGroupSelect01">Chủ đề</label>
-                  <input type="text" class="form-control" id="topic" name="topic" placeholder="Nhập chủ đề">
-                  <select class="form-select" id="inputTopic2">
-                      <option selected>Choose...</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                  </select>
-              </div>
-              <div class="input-group flex-nowrap">
-                  <span class="input-group-text" id="addon-wrapping">Từ</span>
-                  <input type="text" class="form-control" id="word" name="word" placeholder="Nhập từ tiếng Anh" aria-label="Username" aria-describedby="addon-wrapping">
-              </div>
-              <div class="input-group flex-nowrap">
-                  <span class="input-group-text" id="addon-wrapping">Loại từ</span>
-                  <input type="text" class="form-control" id="type" name="type" placeholder="Nhập loại từ" aria-label="Username" aria-describedby="addon-wrapping">
-              </div>
-              <div class="input-group flex-nowrap">
-                  <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
-                  <input type="text" class="form-control" id="definition" name="definition" placeholder="Nhập nghĩa của từ" aria-label="Username" aria-describedby="addon-wrapping">
-              </div>
-              
-              <button type="submit" class="btn btn-primary">Lưu</button>
-            </form>
+<!-- Modal them-->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="inputGroupSelect01"
+            >Chủ đề</label
+          >
+          <input type="text" class="form-control" placeholder="Nhập chủ đề" />
+          <select class="form-select" id="inputGroupSelect01">
+            <option selected>Choose...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text" id="addon-wrapping">Từ</span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Nhập từ"
+            aria-label="Username"
+            aria-describedby="addon-wrapping"
+          />
         </div>
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text" id="addon-wrapping">Loại từ</span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Nhập loại từ"
+            aria-label="Username"
+            aria-describedby="addon-wrapping"
+          />
+        </div>
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Nhập nghĩa của từ"
+            aria-label="Username"
+            aria-describedby="addon-wrapping"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Đóng
+        </button>
+        <button type="button" class="btn btn-primary">Lưu</button>
       </div>
     </div>
   </div>

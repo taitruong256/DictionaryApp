@@ -1,98 +1,120 @@
-var data = [];
-async function loadItems() {
+// Load toàn bộ từ theo chủ đề dưới data base
+async function loadItems(name_topic = null) {
+  let data = [];
   try {
-    const response = await fetch(wordListUrl);
+    const response = await fetch("http://127.0.0.1:8000/api/words");
     const newRows = await response.json();
-
+    // console.log(newRows);
     newRows.forEach((newRow) => {
-      let existingChuDeIndex = data.findIndex(
-        (item) => item.chu_de === newRow.topic
-      );
+      if (name_topic == null) {
+        let existingChuDeIndex = data.findIndex(
+          (item) => item.chu_de === newRow.topic
+        );
 
-      if (existingChuDeIndex !== -1) {
-        data[existingChuDeIndex].list_tu.push({
-          tu: newRow.word,
-          loai_tu: newRow.type,
-          nghia: newRow.definition,
-          id: newRow.id,
-        });
-      } else {
-        data.push({
-          chu_de: newRow.topic,
-          list_tu: [
-            {
-              tu: newRow.word,
-              loai_tu: newRow.type,
-              nghia: newRow.definition,
-              id: newRow.id,
-            },
-          ],
-        });
+        if (existingChuDeIndex !== -1) {
+          data[existingChuDeIndex].list_tu.push({
+            tu: newRow.word,
+            loai_tu: newRow.type,
+            nghia: newRow.definition,
+            id: newRow.id,
+          });
+        } else {
+          data.push({
+            chu_de: newRow.topic,
+            list_tu: [
+              {
+                tu: newRow.word,
+                loai_tu: newRow.type,
+                nghia: newRow.definition,
+                id: newRow.id,
+              },
+            ],
+          });
+        }
+      } else if (name_topic == newRow.topic) {
+        let existingChuDeIndex = data.findIndex(
+          (item) => item.chu_de === newRow.topic
+        );
+
+        if (existingChuDeIndex !== -1) {
+          data[existingChuDeIndex].list_tu.push({
+            tu: newRow.word,
+            loai_tu: newRow.type,
+            nghia: newRow.definition,
+            id: newRow.id,
+          });
+        } else {
+          data.push({
+            chu_de: newRow.topic,
+            list_tu: [
+              {
+                tu: newRow.word,
+                loai_tu: newRow.type,
+                nghia: newRow.definition,
+                id: newRow.id,
+              },
+            ],
+          });
+        }
       }
     });
-
+    return data;
     // Bạn có thể thêm code để hiển thị dữ liệu lên UI ở đây
   } catch (error) {
     console.error("Error:", error);
+    return [];
   }
 }
 
 window.onload = async function () {
-  await loadItems();
-  assignItems();
+  $("#list-group").empty();
+  $("#list-group").append(
+    `<button onclick ="search_topic()" class="list-group-item list-group-item-action active" >ALL</button><div style="padding-top:5px"></div>`
+  );
+  let data = await loadItems();
+  // console.log(data);
+  assignItems(data, true);
 };
+async function search_topic(name_topic) {
+  let data = await loadItems(name_topic);
+  assignItems(data, false); // Chuyển data như một tham số
+}
 
-// await console.log(data);
-$(document).ready(function () {
-  $(".list-group-item").click(function () {
-    // Xóa lớp "active" khỏi tất cả các mục
-    $(".list-group-item").removeClass("active");
-
-    // Thêm lớp "active" vào mục được nhấp chuột
-    $(this).addClass("active");
-
-    // Cập nhật vùng nội dung dựa trên văn bản của mục được nhấp (tùy chọn)
-    var tieude = $(this).text();
-    $.each(data, function (index, chuDe) {
-      console.log(tieude, chuDe.chu_de);
-      if (tieude == chuDe.chu_de) {
-        var chuDeHtml = `<h2>${chuDe.chu_de}</h2>`;
-        var listTuHtml = "";
-        $.each(chuDe.list_tu, function (index, tu) {
-          listTuHtml += `
-            <div class="item">
-            <strong>${tu.tu}</strong>
-            (${tu.loai_tu}) hello: ${tu.nghia}
-            </div>`;
-        });
-        $("#content-area").html(chuDeHtml + listTuHtml);
-      }
-    });
-  });
-});
-
-function assignItems() {
+// Hiển thị dữ liệu vừa load, nhận data làm tham số
+function assignItems(data, flag) {
+  $("#content-area").empty(); // Xóa nội dung cũ
+  // $("#list-group").empty(); // Tùy thuộc vào yêu cầu, có thể bạn không muốn làm điều này
   $.each(data, function (index, chuDe) {
-    var chuDeHtml = `<h2>${chuDe.chu_de}</h2>`;
+    var chuDeHtml = `<h2 style="padding-top: 10px;">${chuDe.chu_de}</h2>`;
     var listTuHtml = "";
     $.each(chuDe.list_tu, function (index, tu) {
-      listTuHtml += `
-        <div class="item">
-        <strong>${tu.tu}</strong>
-        (${tu.loai_tu}) hello: ${tu.nghia}
-        <a class="btn btn-outline-secondary btn-delete" href="/api/delete-word/${tu.id}/" data-method="delete">Xóa</a>    
-        </div>`;
-    });                                      // thêm thẻ a để link tới url gọi api/delete-word/id để xóa, thẻ a dùng method = GET nên bị lỗi
+      listTuHtml += `<div class="item" style="padding-top: 5px;">
+      <div class="input-group" >
+        <input type="text" class="form-control" value="${tu.tu} (${tu.loai_tu}) : ${tu.nghia} ">
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fa-regular fa-pen-to-square"></i> Sửa</button>
+        <button class="btn btn-outline-secondary" type="button"><i class="fa-solid fa-x" ></i> Xóa</button>
+      </div>
+      </div>`;
+    });
     $("#content-area").append(chuDeHtml + listTuHtml);
-    $("#list-group").append(
-      `<a href="#" class="list-group-item list-group-item-action active">${chuDe.chu_de}</a>`
-    );
+    // Cập nhật #list-group nếu cần, ví dụ đối với một nút chọn topic mới
+    if (flag) {
+      $("#list-group").append(
+        `<button onclick ="search_topic('${chuDe.chu_de}')" class="list-group-item list-group-item-action active" >${chuDe.chu_de}</button><div style="padding-top:5px"></div>`
+      );
+    }
   });
 }
 
+// Tìm kiếm từ
 async function search() {
-  var wordToSearch = document.getElementById("wordToSearch").value;
-  console.log("Searching for:", wordToSearch);
+  var wordToSearch = document.getElementById("wordToSearch").value.trim(); // Đảm bảo có một input field với id này để nhập từ cần tìm
+  if (!wordToSearch) {
+    // Kiểm tra xem chuỗi sau khi trim có phải là rỗng không
+    console.log("No content to search");
+    return; // Dừng hàm nếu không có nội dung để tìm kiếm
+  }
+  // console.log("Searching for:", wordToSearch);
   try {
     var response = await fetch(
       `http://127.0.0.1:8000/api/words/?search=${encodeURIComponent(
@@ -100,26 +122,31 @@ async function search() {
       )}`
     );
     if (!response.ok) throw new Error("Không Tìm Thấy");
-    var res = await response.json(); // Sử dụng await ở đây
-    console.log(res); // data giờ là một đối tượng JSON
+    var words = await response.json();
+    // console.log(words);
+
+    const tableContainer = document.getElementById("tableContainer");
+    const tbody = document.querySelector("#searchResultsTable tbody");
+    tbody.innerHTML = ""; // Xóa các kết quả tìm kiếm cũ trước khi thêm mới
+
+    if (words.length > 0) {
+      words.forEach((word_search) => {
+        const row = `<tr>
+          <td>${word_search.topic}</td>
+          <td>${word_search.word}</td>
+          <td>${word_search.type}</td>
+          <td>${word_search.definition}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+      tableContainer.classList.remove("hidden"); // Hiển thị bảng
+    } else {
+      tableContainer.classList.add("hidden"); // Ẩn bảng nếu không có kết quả
+      // Bạn có thể thêm mã để hiển thị thông báo "Không tìm thấy kết quả"
+    }
   } catch (error) {
     console.error("Error:", error.message);
+    tableContainer.classList.add("hidden");
+    // Xử lý lỗi, ví dụ hiển thị thông báo lỗi
   }
-
-  // res = {
-  //   id: "1113",
-  //   chu_de: "Aminal",
-  //   tu: "dog",
-  //   loai_tu: "danh tu",
-  //   nghia: "chó",
-  // };
-
-  // format cái kết quả cho nó đẹp
-  res.forEach((word_search) => {
-    let textResult = `${word_search.topic} | ${word_search.word} (${word_search.type}): ${word_search.definition}`;
-    console.log(textResult);
-    $("input#searchResult").val(textResult);
-    // Nếu bạn muốn hiển thị kết quả trong một
-  });
 }
-
