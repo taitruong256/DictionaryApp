@@ -11,3 +11,10 @@ div.container {
 #content-area {
     padding: 20px;
 }
+
+
+.beautiful-bold-font {
+    font-family: 'FontName', sans-serif; /* Thay 'FontName' bằng tên của font chữ bạn muốn sử dụng */
+    font-weight: bold; /* Thiết lập font-weight là đậm */
+    color: black; /* Thiết lập màu chữ thành màu đen */
+}
