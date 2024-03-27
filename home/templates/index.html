@@ -1,8 +1,15 @@
 {% extends 'base.html'%} {% load static %} {%block content%}
 <div class="container">
   <div class="row">
-    <h1 style="color: #0b306f"><i class="fa-solid fa-book"></i>Dictionary</h1>
+    {% comment %} <h1 style="color: #0b306f"><i class="fa-solid fa-book"></i>Dictionary</h1> {% endcomment %}
+      <div class="col-auto order-last">
+          <h1 class="text-end beautiful-bold-font">ENGLISH SUCCESS - "Tiếng anh cho ta cơ hội nhìn ra thế giới"</h1>
+      </div>
+      <div class="col-auto order-first">
+          <img src="{% static 'images/logo.jpg' %}" alt="Logo" style="width: 70px; height: auto;">
+      </div>
   </div>
+
   <div class="row" style="padding-top: 30px; padding-bottom: 50px">
     <div class="input-group input-group-lg">
       <input
@@ -79,54 +86,39 @@
         ></button>
       </div>
       <div class="modal-body">
-        <div class="input-group mb-3">
-          <label class="input-group-text" for="inputGroupSelect01"
-            >Chủ đề</label
-          >
-          <input type="text" class="form-control" placeholder="Nhập chủ đề" />
-          <select class="form-select" id="inputGroupSelect01">
-            <option selected>Choose...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Loại từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập loại từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập nghĩa của từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
+        <form method="POST" action="/api/add-word/">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupSelect01">Chủ đề</label>
+              <input type="text" class="form-control" id="topic" name="topic" placeholder="Nhập chủ đề">
+              {% comment %} <select class="form-select" id="inputTopic2">
+                  <option selected>Choose...</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+              </select> {% endcomment %}
+          </div>
+          <div class="input-group flex-nowrap">
+              <span class="input-group-text" id="addon-wrapping">Từ</span>
+              <input type="text" class="form-control" id="word" name="word" placeholder="Nhập từ tiếng Anh" aria-label="Username" aria-describedby="addon-wrapping">
+          </div>
+          <div class="input-group flex-nowrap">
+              <span class="input-group-text" id="addon-wrapping">Loại từ</span>
+              <input type="text" class="form-control" id="type" name="type" placeholder="Nhập loại từ" aria-label="Username" aria-describedby="addon-wrapping">
+          </div>
+          <div class="input-group flex-nowrap">
+              <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
+              <input type="text" class="form-control" id="definition" name="definition" placeholder="Nhập nghĩa của từ" aria-label="Username" aria-describedby="addon-wrapping">
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Lưu</button>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Đóng
         </button>
-        <button type="button" class="btn btn-primary">Lưu</button>
+        {% comment %} <button type="button" class="btn btn-primary">Lưu</button> {% endcomment %}
       </div>
     </div>
   </div>
@@ -152,54 +144,60 @@
         ></button>
       </div>
       <div class="modal-body">
-        <div class="input-group mb-3">
-          <label class="input-group-text" for="inputGroupSelect01"
-            >Chủ đề</label
-          >
-          <input type="text" class="form-control" placeholder="Nhập chủ đề" />
-          <select class="form-select" id="inputGroupSelect01">
-            <option selected>Choose...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Loại từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập loại từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Nhập nghĩa của từ"
-            aria-label="Username"
-            aria-describedby="addon-wrapping"
-          />
-        </div>
+        <form id="editWordForm" method="POST" action="/api/update-word/">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01"
+              >Chủ đề</label
+            >
+            <input type="text" class="form-control" placeholder="Nhập chủ đề" name="topic"/>
+            {% comment %} <select class="form-select" id="inputGroupSelect01">
+              <option selected>Choose...</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select> {% endcomment %}
+          </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Từ</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nhập từ"
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+              name="word"
+            />
+          </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Loại từ</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nhập loại từ"
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+              name="type"
+            />
+          </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Nghĩa của từ</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nhập nghĩa của từ"
+              aria-label="Username"
+              aria-describedby="addon-wrapping"
+              name="definition"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Lưu</button>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Đóng
         </button>
-        <button type="button" class="btn btn-primary">Lưu</button>
       </div>
     </div>
   </div>
